@@ -11,9 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "@sequelize/core": "^7.0.0-alpha.32",
-    "dotenv": "^16.3.1",
-    "imported": "^2.2.1",
-    "pg": "^8.11.3"
+    "dotenv": "^16.3.1"
+    
   },
   "type": "module"
 }
