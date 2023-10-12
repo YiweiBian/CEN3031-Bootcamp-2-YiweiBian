@@ -23,7 +23,7 @@
   Read - artilce to learn more about environment variables - https://medium.com/the-node-js-collection/making-your-node-js-work-everywhere-with-environment-variables-2da8cdf6e786
 */
 //ADD CODE HERE to connect to you database
-
+const sequelize = new Sequelize(process.env.API_URL);
 //Testing that the .env file is working - This should print out the port number
 console.log(process.env.PORT); //Should print out 8080 
 console.log(process.env.API_Key); //Should print out "Key Not set - starter code only"
@@ -39,13 +39,36 @@ console.log(process.env.API_Key); //Should print out "Key Not set - starter code
    */
   fs.readFile('listings.json', 'utf8', function(err, data) {
     // Errors-Check out this resource for an idea of the general format err objects and Throwing an existing object.
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/throw#throwing_an_existing_object
-    if (err) throw err;
-    console.log(data);
 
+   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/throw#throwing_an_existing_object
+      
+  if (err) throw err;
+  console.log(data);
+      try {
+          const listingData = JSON.parse(data).entries;
+          listingData.forEach(async (item) => {//asynchronously parse in items
+              const newItem = await Listing.create({
+                  code: item.code ? item.code : null,
+                  name: item.name ? item.name : null,
+                  coordinates: JSON.stringify( {
+                      latitude: parseFloat(item ?. coordinates ?. latitude) || null,
+                      longitude: parseFloat(item?.coordinates?.longitude) || null,//use optional chaining to parse in attributes which may be undefined.
+                      // latitude: parseFloat(item.coordinates.latitude ? item.coordinates.latitude : null),
+                      //longitude: parseFloat(item.coordinates.longitude ? item.coordinates.longitude : null),
+                  }),
+
+                  address: item.address ? item.address : null//check if they exist then parse in
+
+              });
+
+          })
+          
+      }
+      catch (error) {
+          console.error('Unable to parse data: ', error)
+      }
     //Save and parse the data from the listings.json file into a variable, so that we can iterate through each instance - Similar to Bootcamp#1
    //ADD CODE HERE
-  
      //Use Sequelize create a new row in our database for each entry in our listings.json file using the Listing model we created in ListingModel.js
     // to https://sequelize.org/docs/v6/core-concepts/model-instances/#creating-an-instance
      //ADD CODE HERE

@@ -7,7 +7,7 @@ import { Sequelize, Model, DataTypes,  QueryTypes, sql } from '@sequelize/core';
   import { Listing } from './ListingModel.js';
 /* Connect to your database */
 //ADD CODE HERE to connect to you database - same code you put for JSONtoPostgreSQL.js and ListingModel.js
-
+const sequelize = new Sequelize(process.env.API_URL);
 /*There are many ways to make aynchronous calls in Javascript: Promises, callbacks, Asyc/Await - https://www.geeksforgeeks.org/difference-between-promise-and-async-await-in-node-js/
   Best Practice: A current practice is to use Async Await.  
   Async / Await - https://www.theodinproject.com/lessons/node-path-javascript-async-and-await and https://javascript.info/async-await
@@ -53,6 +53,14 @@ try {
       async function retrieveAllListings() {
           //ADD CODE HERE
           console.log('Retrieving all listings');
+          const  allListings = await Listing.findAll();
+          allListings.forEach(item => {
+              console.log('Code: ', item.code);
+              console.log('Name: ', item.name);
+              console.log('Coordinates: ', item?.coordinates || "Not available"); //use optional chaining to read potentially undefined data
+              console.log('Address: ', item.address || "Not available");
+              console.log('\n');
+          })
       }
     /* 
     Find the document that contains data corresponding to Library West, then log it to the console. 
@@ -60,8 +68,20 @@ try {
    */
     async function findLibraryWest() {
        //ADD CODE HERE
-      console.log('Finding Library West');
-
+        console.log('Finding Library West');
+        const libraryWest = await Listing.findOne({ where: { name: 'Library West' } });//locate library west
+        if (libraryWest) {
+            console.log('Code: ', libraryWest.code);
+            console.log('Name: ', libraryWest.name);
+            console.log('Coordinates ', libraryWest?.coordinates || "Not available");
+            console.log('Address: ', libraryWest.address || "Not available");
+            console.log('\n');
+        }
+        else {
+            console.log('Library West not found!');
+        }
+            
+        
     }
 
     /*
@@ -73,7 +93,20 @@ try {
     */
       async function removeCable() {
          //ADD CODE HERE
-        console.log('Removing Cable BLDG');
+          console.log('Removing Cable BLDG');
+          try {
+              await Listing.destroy({ where: { code: 'CABL' } });
+          }
+          catch (error) {
+              console.error('Unable to remove Cable BLDG');
+          }
+          const cable = await Listing.findOne({ where: { code: 'CABL' } });
+          if (cable) {
+              console.log('Cable BLDG not removed!');
+          }
+          else {
+              console.log('Cable BLDG removed!');
+          }
     }
 
     /*
@@ -82,7 +115,20 @@ try {
     */
     async function addDSIT() {
        //ADD CODE HERE
-      console.log('Adding the new DSIT BLDG that will be across from Reitz union. Bye Bye CSE, Hub, and French Fries.');
+        console.log('Adding the new DSIT BLDG that will be across from Reitz union. Bye Bye CSE, Hub, and French Fries.');
+        await Listing.create({
+            code: 'DSIT',
+            name: 'Data Science and IT Building'
+        });
+        const dsit = await Listing.findOne({ where: { code: 'DSIT' } });
+        if (dsit) {
+            console.log('DSIT successfully added!');
+        }
+        else {
+            console.log('DSIT not added!');
+        }
+
+        
     }
    
 
@@ -93,18 +139,19 @@ try {
     */
     async function updatePhelpsLab() {
        //ADD CODE HERE
-       console.log('UpdatingPhelpsLab.');
+        console.log('UpdatingPhelpsLab.');
+        const phelps = await Listing.update({ address: '1953 Museum Rd, Gainesville, FL 32603, United States' }, { where: { code: 'PHL' } });
  
     }
 
     
    console.log("Use these calls to test that your functions work. Use console.log statements in each so you can look at the terminal window to see what is executing. Also check the database.")
    //Calling all the functions to test them
-   retrieveAllListings() 
-   removeCable(); 
-   addDSIT();
-   updatePhelpsLab();
-   findLibraryWest();
+   await retrieveAllListings() 
+   await removeCable(); 
+   await addDSIT();
+   await updatePhelpsLab();
+   await findLibraryWest();
        
   
 
