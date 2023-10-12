@@ -3,7 +3,7 @@
   Import modules/files you may need to correctly run the script. 
   Make sure to save your DB's uri in the config file, then import it using `import` statements so that we can ensure we are using ES6 modules 
  */
-  import { Sequelize, Model, DataTypes,  QueryTypes, sql } from '@sequelize/core';
+  import { Sequelize } from '@sequelize/core';
   
   //imports dontenv module and allows us to access stored environment variables stored in .env file - See https://www.npmjs.com/package/dotenv
   import 'dotenv/config';
@@ -47,7 +47,7 @@ console.log(process.env.API_Key); //Should print out "Key Not set - starter code
       try {
           const listingData = JSON.parse(data).entries;
           listingData.forEach(async (item) => {//asynchronously parse in items
-              const newItem = await Listing.create({
+              await Listing.create({
                   code: item.code ? item.code : null,
                   name: item.name ? item.name : null,
                   coordinates: JSON.stringify( {

@@ -1,4 +1,4 @@
-import { Sequelize, Model, DataTypes,  QueryTypes, sql } from '@sequelize/core';
+import { Sequelize } from '@sequelize/core';
 
 
   //imports dontenv module and allows us to access stored environment variables stored in .env file
@@ -140,7 +140,7 @@ try {
     async function updatePhelpsLab() {
        //ADD CODE HERE
         console.log('UpdatingPhelpsLab.');
-        const phelps = await Listing.update({ address: '1953 Museum Rd, Gainesville, FL 32603, United States' }, { where: { code: 'PHL' } });
+        await Listing.update({ address: '1953 Museum Rd, Gainesville, FL 32603, United States' }, { where: { code: 'PHL' } });
  
     }
 
